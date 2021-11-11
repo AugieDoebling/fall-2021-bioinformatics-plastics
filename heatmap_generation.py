@@ -10,6 +10,7 @@ import cProfile
 from urllib.request import urlretrieve
 import time
 import pickle
+import sys
 
 # data import
 # bio_sample_data_gdd_id = '1hqDeH_JgND_PY0DX_sFfUQcAuZXoQbAA'
@@ -19,7 +20,9 @@ import pickle
 #                                     unzip=False)
 # urlretrieve("https://pastebin.com/raw/MZfiRmT6", './bio_sampledata.txt')
 
-fasta_file = 'uniprot_keyword_search.fasta'
+fasta_file = sys.argv[1]
+
+print('using fasta file', fasta_file)
 
 # !head ./bio_sampledata.txt
 
@@ -126,6 +129,7 @@ def generate_heatmap(df):
     # add heatmap to dataframe
     df.iloc[i]['Heatmap'] = heatmap
 
+generate_heatmap(data)
 
 finish_time = time.strftime("%Y%m%d-%H%M%S")
 
