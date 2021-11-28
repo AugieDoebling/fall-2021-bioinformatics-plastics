@@ -5,27 +5,19 @@ import numpy as np
 from Bio import SeqIO
 import re
 import itertools
-# from google_drive_downloader import GoogleDriveDownloader as gdd
 import cProfile
 from urllib.request import urlretrieve
 import time
 import pickle
 import sys
 
-# data import
-# bio_sample_data_gdd_id = '1hqDeH_JgND_PY0DX_sFfUQcAuZXoQbAA'
-
-# gdd.download_file_from_google_drive(file_id=bio_sample_data_gdd_id,
-#                                     dest_path='./bio_sampledata.txt',
-#                                     unzip=False)
-# urlretrieve("https://pastebin.com/raw/MZfiRmT6", './bio_sampledata.txt')
-
+# get the file from the args
 fasta_file = sys.argv[1]
-
 print('using fasta file', fasta_file)
 
 # !head ./bio_sampledata.txt
 
+# loads fasta file into pandas dataframe
 def read_fasta(filename):
   descriptor_line_pattern = re.compile(">([\w|\.]*) ([\w|\s|\:|\(|\)|\-]*) \[(.*)\]")
 
@@ -41,16 +33,17 @@ def read_fasta(filename):
       if line[0] == '>':
         if id is not None:
           records.append([id, enzyme, species, genetic_data])
+        # either use the regex matching or just use the line as the id
+
         # match = descriptor_line_pattern.match(line)
         # if match is None:
         #   print('HELP', line)
         #   return
         # id = match.group(1)
         # enzyme = match.group(2)
-        # species = match.group(3
-        id = line
-        # enzyme = match.group(2)
         # species = match.group(3)
+
+        id = line
         genetic_data = ''
       else:
         genetic_data += line.strip()
@@ -58,10 +51,10 @@ def read_fasta(filename):
 
   return pd.DataFrame(records, columns=['ID', 'Enzyme', 'Species', 'Genes', 'Heatmap'])
 
-        
+# load the data into the dataframe
 data = read_fasta(fasta_file)
-# data.head()
 
+# load the blosum scoring matrix
 url = 'https://www.ncbi.nlm.nih.gov/Class/FieldGuide/BLOSUM62.txt'
 blosum62 = pd.read_csv(url, skiprows=6, delim_whitespace=True, index_col=0)
 blosum62['-'] = blosum62['*']
@@ -129,12 +122,14 @@ def generate_heatmap(df):
     # add heatmap to dataframe
     df.iloc[i]['Heatmap'] = heatmap
 
+# generate the heatmap
 generate_heatmap(data)
 
 finish_time = time.strftime("%Y%m%d-%H%M%S")
 
+# save the cache to a pickle - this can then be reloaded without rerunning analysis
 with open(f'./cache_generated_{fasta_file}_{finish_time}.pickle', 'wb') as cache_file:
   pickle.dump(cache, cache_file, protocol=4)
 
+# save the heatmap data to pickle
 data.to_pickle(f'./heatmap_generated_{fasta_file}_{finish_time}.pickle', protocol=4)
-# data.head()
