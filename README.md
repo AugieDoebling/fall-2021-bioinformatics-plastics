@@ -1,10 +1,10 @@
 # Fall 2021 Bioinformatics Algorithms Group Project
 
 ## Team Members
-Kian Banihashemi 
-Augie Doebling
-Kaanan Kharwa
-Julian Menendez
+* Kian Banihashemi 
+* Augie Doebling
+* Kaanan Kharwa
+* Julian Menendez
 
 ## The Plastics
 By analyzing the genomic data of several enzymes capable of breaking down PHB plastic, we hope to find similarities suggesting which areas are the most important for this task. This knowledge would allow future researchers to insert this active site into other bacteria in hopes of creating new organisms capable of breaking down PHB.
